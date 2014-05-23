@@ -26,8 +26,8 @@ public class JenkinsBuildReporterTests {
     @Test
     public void test1() {
         log.info("Starting test1");
-        final String source = "http://sectstjnk01.us.gspt.net:8080/parsing/RegressionRevival_PetSmart_TST01/38/api/json?depth=2";
-        final FileDownloader downloader = new FileDownloader();
+        final String source = "http://sectstjnk01.us.gspt.net:8080/parsing/RegressionRevival_PetSmart_TST01/38/api/xml?depth=2";
+        final FileDownloader downloader = new FileDownloader(source);
 
         new Thread(updateProgress(downloader)).start();
         new Thread(startDownload(downloader)).run();
@@ -38,8 +38,7 @@ public class JenkinsBuildReporterTests {
             @Override
             public void run() {
                 log.info("Start download");
-                downloader.downloadFile("http://sectstjnk01.us.gspt.net:8080/parsing/RegressionRevival_PetSmart_TST01/38/api/xml?depth=2",
-                        "output.xml");
+                downloader.downloadFile("output.xml");
                 log.info("Finished download");
                 inProgress = false;
             }
@@ -61,12 +60,4 @@ public class JenkinsBuildReporterTests {
         };
     }
 
-    @Test
-    public void test2() {
-        FileDownloader downloader = new FileDownloader();
-        Document jobs = downloader.getDocument("http://sectstjnk01.us.gspt.net:8080/view/Regression%20Revival/api/xml", "jobs.xml");
-        for (final Job job : new JobParser(jobs).getJobList()) {
-            log.info(job.toString());
-        }
-    }
 }

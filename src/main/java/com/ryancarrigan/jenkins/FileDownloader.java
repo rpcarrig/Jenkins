@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.math.BigDecimal;
 
 /**
  * com.ryancarrigan.jenkins.build
@@ -20,18 +21,28 @@ import java.io.*;
  */
 public class FileDownloader {
     private static Logger log = LoggerFactory.getLogger(FileDownloader.class);
-
     private static BufferedInputStream inputStream = null;
     private Integer bytesRead = 0;
+    private String remoteFile;
 
-    public FileDownloader() {
-        log.info("FileDownloader created");
+    public FileDownloader(final String remoteFile) {
+        this.remoteFile = remoteFile;
+        log.info(remoteFile);
     }
 
-    public File downloadFile(final String source, final String destination) {
+    public FileDownloader(final String url, final API api, final Depth depth) {
+        this.remoteFile = String.format("%s/api/%s?depth=%d", url, api.getApi(), depth.getDepth());
+        log.info(remoteFile);
+    }
+
+    public String getFileSize() {
+        final Double kb = new BigDecimal(bytesRead).divide(new BigDecimal(1024)).doubleValue();
+        return String.format("%d KB", kb.intValue());
+    }
+
+    public File downloadFile(final String destination) {
         File file = new File(destination);
-        InputStream inputStream = getInputStream(source);
-        log.info("Input stream open, ready to download");
+        InputStream inputStream = getInputStream(remoteFile);
         try {
             BufferedOutputStream outputStream = getOutputStream(file);
             Integer input;
@@ -39,11 +50,9 @@ public class FileDownloader {
                 outputStream.write(input);
                 bytesRead += input;
             }
-            log.info("Reached end of file. Closing output stream");
             outputStream.close();
-            log.info("Closing input stream");
             inputStream.close();
-            log.info(String.format("File size: %d bytes", bytesRead));
+            log.info(String.format("Reached end of file. File size: %d", bytesRead));
             return file;
         } catch (FileNotFoundException e) {
 
@@ -53,9 +62,9 @@ public class FileDownloader {
         throw new NullPointerException("No file could be returned");
     }
 
-    public Document getDocument(final String url, final String fileName) {
+    public Document getDocument(final String fileName) {
         try {
-            return new SAXBuilder().build(downloadFile(url, fileName));
+            return new SAXBuilder().build(downloadFile(fileName));
         } catch (JDOMException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -69,7 +78,7 @@ public class FileDownloader {
     }
 
     private static BufferedInputStream getInputStream(final String url){
-        log.info("Getting input stream,executing HTTP request...");
+        log.info("Executing HTTP request...");
         try {
             HttpResponse response = HttpClients.createDefault().execute(new HttpGet(url));
             log.info("Received HTTP response");
@@ -84,12 +93,41 @@ public class FileDownloader {
 
     private static BufferedOutputStream getOutputStream(final File file) {
         try {
-            log.info("Creating and buffering output file.");
             return new BufferedOutputStream(new FileOutputStream(file));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
         throw new NullPointerException("Could not get output file.");
+    }
+
+    public enum API {
+        XML("xml"),
+        JSON("json"),
+        PYTHON("python");
+
+        private String api;
+        private API(final String api) {
+            this.api = api;
+        }
+
+        protected String getApi() {
+            return api;
+        }
+    }
+
+    public enum Depth {
+        ZERO(0),
+        ONE(1),
+        TWO(2);
+
+        private Integer depth;
+        private Depth(final Integer depth) {
+            this.depth = depth;
+        }
+
+        protected Integer getDepth() {
+            return depth;
+        }
     }
 
 }
