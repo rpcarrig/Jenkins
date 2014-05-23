@@ -25,13 +25,15 @@ public class FileDownloader {
     private Integer bytesRead = 0;
     private String remoteFile;
 
-    public FileDownloader(final String remoteFile) {
-        this.remoteFile = remoteFile;
-        log.info(remoteFile);
+    public FileDownloader(final String url) {
+        this(url, API.XML, Depth.ZERO);
     }
 
     public FileDownloader(final String url, final API api, final Depth depth) {
-        this.remoteFile = String.format("%s/api/%s?depth=%d", url, api.getApi(), depth.getDepth());
+        StringBuilder buffer = new StringBuilder(url);
+        if (!url.endsWith("/"))
+            buffer.append("/");
+        this.remoteFile = String.format("%sapi/%s?depth=%d", buffer.toString(), api.getApi(), depth.getDepth());
         log.info(remoteFile);
     }
 
@@ -40,7 +42,7 @@ public class FileDownloader {
         return String.format("%d KB", kb.intValue());
     }
 
-    public File downloadFile(final String destination) {
+    public File downloadToFile(final String destination) {
         File file = new File(destination);
         InputStream inputStream = getInputStream(remoteFile);
         try {
@@ -60,17 +62,6 @@ public class FileDownloader {
 
         }
         throw new NullPointerException("No file could be returned");
-    }
-
-    public Document getDocument(final String fileName) {
-        try {
-            return new SAXBuilder().build(downloadFile(fileName));
-        } catch (JDOMException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        throw new NullPointerException("Error getting document");
     }
 
     public Integer getBytesRead() {

@@ -32,6 +32,7 @@ public class Build extends JenkinsXMLFile {
     private String url;
 
     public Build(final Document document) {
+        super(document, "mavenModuleSetBuild");
         this.building = Boolean.valueOf(root.getChildText("building"));
         this.keepLog = Boolean.valueOf(root.getChildText("keepLog"));
         this.changeSet = new ChangeSet(root.getChild("changeSet"));
@@ -151,6 +152,7 @@ public class Build extends JenkinsXMLFile {
         private String kind;
         
         protected ChangeSet(final Element changeSet) {
+            log.info(changeSet.getText());
             this.item = new Item(changeSet.getChild("item"));
             this.kind = changeSet.getChildText("kind");
         }

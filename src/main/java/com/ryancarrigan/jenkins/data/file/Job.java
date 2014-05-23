@@ -35,7 +35,7 @@ public class Job extends JenkinsXMLFile {
     private String url;
 
     public Job(final Document document) {
-        super(document);
+        super(document, "mavenModuleSet");
         this.buildable = Boolean.valueOf(root.getChildText("buildable"));
         this.concurrentBuild = Boolean.valueOf(root.getChildText("concurrentBuild"));
         this.inQueue = Boolean.valueOf(root.getChildText("inQueue"));
@@ -55,6 +55,11 @@ public class Job extends JenkinsXMLFile {
         this.displayName = root.getChildText("displayName");
         this.name = root.getChildText("name");
         this.url = root.getChildText("url");
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%s (%s)", displayName, name);
     }
 
     public Boolean getBuildable() {
@@ -166,8 +171,10 @@ public class Job extends JenkinsXMLFile {
         private String url;
 
         protected Build(final Element build) {
-            this.number = Integer.valueOf(build.getChildText("number"));
-            this.url = build.getChildText("url");
+            if (null != build) {
+                this.number = Integer.valueOf(build.getChildText("number"));
+                this.url = build.getChildText("url");
+            }
         }
     }
 

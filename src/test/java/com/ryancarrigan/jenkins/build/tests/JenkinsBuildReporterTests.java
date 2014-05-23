@@ -1,8 +1,6 @@
 package com.ryancarrigan.jenkins.build.tests;
 
 import com.ryancarrigan.jenkins.FileDownloader;
-import com.ryancarrigan.jenkins.data.file.Job;
-import org.jdom2.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.BeforeMethod;
@@ -38,7 +36,7 @@ public class JenkinsBuildReporterTests {
             @Override
             public void run() {
                 log.info("Start download");
-                downloader.downloadFile("output.xml");
+                downloader.downloadToFile("output.xml");
                 log.info("Finished download");
                 inProgress = false;
             }

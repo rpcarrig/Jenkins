@@ -26,7 +26,7 @@ public abstract class XMLParser {
 
     public XMLParser(final String xmlFile) {
         try {
-            document = (Document) builder.build(xmlFile);
+            document = builder.build(xmlFile);
             rootNode = document.getRootElement();
         } catch (final JDOMException jde) {
 

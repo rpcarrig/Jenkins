@@ -15,7 +15,7 @@ public class View extends JenkinsXMLFile {
     private List<Job> jobs;
 
     public View(final Document document) {
-        super(document);
+        super(document, "listView");
         this.description = root.getChildText("description");
         this.jobs = getJobList();
     }
@@ -36,7 +36,7 @@ public class View extends JenkinsXMLFile {
         return jobs;
     }
 
-    private class Job {
+    public class Job {
         private String color;
         private String name;
         private String url;
@@ -45,6 +45,23 @@ public class View extends JenkinsXMLFile {
             this.color = job.getChildText("color");
             this.name = job.getChildText("name");
             this.url = job.getChildText("url");
+        }
+
+        public String getColor() {
+            return color;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public String getUrl() {
+            return url;
+        }
+
+        @Override
+        public String toString() {
+            return String.format("(%s) %s [%s]", color, name, url);
         }
     }
 }

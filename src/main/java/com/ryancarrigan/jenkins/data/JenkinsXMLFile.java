@@ -20,12 +20,17 @@ public abstract class JenkinsXMLFile {
 
     }
 
-    public JenkinsXMLFile(final Document document) {
+    public JenkinsXMLFile(final Document document, final String expectedRootName) {
         root = document.getRootElement();
+
+        final String actualRootName = root.getName();
+        if (!actualRootName.equals(expectedRootName))
+            throw new NullPointerException(String.format("Invalid input file. Expected: <%s> Actual: <%s>",
+                    expectedRootName, actualRootName));
     }
 
-    public JenkinsXMLFile(final String xmlFileName) {
-        root = getDocument(xmlFileName).getRootElement();
+    protected Boolean isValidFile(final String desiredRootName) {
+        return root.getName().equals(desiredRootName);
     }
 
     private Document getDocument(final String xmlFileName) {
