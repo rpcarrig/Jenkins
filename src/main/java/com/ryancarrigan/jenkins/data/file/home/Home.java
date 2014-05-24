@@ -29,7 +29,7 @@ public class Home extends JenkinsXMLFile {
     private final String nodeDescription;
     private final String nodeName;
     private final String unlabeledLoad;
-    private final ViewJob primaryView;
+    private final HomeView primaryView;
 
     public Home(final Document xmlFile) {
         super(xmlFile, "hudson");
@@ -45,11 +45,12 @@ public class Home extends JenkinsXMLFile {
         this.nodeDescription = root.getChildText("nodeDescription");
         this.nodeName = root.getChildText("nodeName");
         this.unlabeledLoad = root.getChildText("unlabeledLoad");
-        this.primaryView = new ViewJob(root.getChild("primaryView"));
+        this.primaryView = new HomeView(root.getChild("primaryView"));
     }
 
     public View getView(final String viewName) {
         for (final HomeView view : views) {
+            log.info(String.format("Actual <%s> Expected <%s>", view.getName(), viewName));
             if (view.getName().equals(viewName))
                 return new View(getDocument(view.getUrl()));
         }
@@ -116,7 +117,7 @@ public class Home extends JenkinsXMLFile {
         return unlabeledLoad;
     }
 
-    public ViewJob getPrimaryView() {
+    public HomeView getPrimaryView() {
         return primaryView;
     }
 }

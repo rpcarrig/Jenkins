@@ -12,7 +12,7 @@ public class HomeView extends JenkinsXMLFile {
     private String url;
 
     public HomeView(final Element view) {
-        super(view, "view");
+        super(view, "view", "primaryView");
         this.name =  view.getChildText("name");
         this.url = view.getChildText("url");
     }

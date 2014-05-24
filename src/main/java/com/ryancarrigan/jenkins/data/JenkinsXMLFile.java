@@ -12,13 +12,24 @@ public class JenkinsXMLFile extends FileDownloader {
     private String localFile;
     protected Element root;
 
-    public JenkinsXMLFile(final Element element, final String expectedRootName) {
-        root = element;
+    public JenkinsXMLFile(final Element element, final String... expectedNames) {
+//        log.info(String.format("Creating new <%s> XML file. Setting root node to <%s>", getClass().getSimpleName(),
+//                element.getName()));
+        this.root = element;
+        assert(isValidRootName(expectedNames));
+    }
 
+    private Boolean isValidRootName(final String... expectedNames) {
         final String actualRootName = root.getName();
-        if (!actualRootName.equals(expectedRootName))
-            log.error(String.format("Invalid input file. Expected: <%s> Actual: <%s>",
-                    expectedRootName, actualRootName));
+        final StringBuilder nameOutput = new StringBuilder();
+        for (final String name : expectedNames) {
+            if (actualRootName.equals(name))
+                return true;
+            else nameOutput.append(String.format("(%s)", name));
+        }
+        log.error(String.format("Invalid input file. Expected: <%s> Actual: <%s>",
+                nameOutput.toString(), root.getName()));
+        return false;
     }
 
     public JenkinsXMLFile(final Document document, final String expectedRootName) {

@@ -2,7 +2,7 @@ package com.ryancarrigan.jenkins.data.file.build;
 
 import com.ryancarrigan.jenkins.data.JenkinsXMLFile;
 import com.ryancarrigan.jenkins.data.file.BuildCulprit;
-import com.ryancarrigan.jenkins.data.file.build.changeset.BuildChangeSet;
+import com.ryancarrigan.jenkins.data.file.build.changeset.ChangeSet;
 import org.jdom2.Document;
 import org.jdom2.Element;
 
@@ -15,7 +15,7 @@ import java.util.List;
 public class Build extends JenkinsXMLFile {
     private final Boolean building;
     private final Boolean keepLog;
-    private final BuildChangeSet changeSet;
+    private final ChangeSet changeSet;
     private final Integer failCount;
     private final Integer number;
     private final Integer skipCount;
@@ -37,7 +37,7 @@ public class Build extends JenkinsXMLFile {
         super(document, "mavenModuleSetBuild");
         this.building = Boolean.valueOf(root.getChildText("building"));
         this.keepLog = Boolean.valueOf(root.getChildText("keepLog"));
-        this.changeSet = new BuildChangeSet(root.getChild("changeSet"));
+        this.changeSet = new ChangeSet(root.getChild("changeSet"));
         this.failCount = Integer.valueOf(getActionChild("failCount").getText());
         this.number = Integer.valueOf(root.getChildText("number"));
         this.skipCount = Integer.valueOf(getActionChild("skipCount").getText());
@@ -81,7 +81,7 @@ public class Build extends JenkinsXMLFile {
         return keepLog;
     }
 
-    public BuildChangeSet getChangeSet() {
+    public ChangeSet getChangeSet() {
         return changeSet;
     }
 

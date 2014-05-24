@@ -1,9 +1,7 @@
 package com.ryancarrigan.jenkins.build.tests;
 
 import com.ryancarrigan.jenkins.data.Jenkins;
-import com.ryancarrigan.jenkins.data.file.home.HomeView;
 import com.ryancarrigan.jenkins.data.file.view.View;
-import com.ryancarrigan.jenkins.data.file.view.ViewJob;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -25,9 +23,9 @@ public class DataTests extends TestBase {
     @Test
     public void testFileDownloader() {
         Jenkins jenkins = new Jenkins(jenkinsUrl);
+        log.info(jenkins.getHome().getNodeDescription());
 
-        View view = jenkins.getHome().getView("Regression Revival");
+        View view = jenkins.getView("Regression Revival");
         log.info(view.getDescription());
-
     }
 }

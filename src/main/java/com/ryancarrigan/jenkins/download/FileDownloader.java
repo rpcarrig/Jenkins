@@ -31,11 +31,13 @@ public class FileDownloader {
     protected Document getDocument(final String url) {
         final String file = getFile(getApiRequest(url));
         try {
-            return new SAXBuilder().build(file);
-        } catch (JDOMException e) {
-            e.printStackTrace();
+            final Document document = new SAXBuilder().build(file);
+            log.info(String.format("Returning <%s> document", document.getRootElement().getName()));
+            return document;
+        } catch (final JDOMException e) {
+            log.error("JDOM Exception", e);
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("IO Exception", e);
         } finally {
             outputFile.deleteOnExit();
         }
@@ -43,6 +45,7 @@ public class FileDownloader {
     }
 
     private String getFile(final String remoteFile) {
+        log.info(String.format("Downloading document: <%s>", remoteFile));
         outputFile = new File(TEMP_FILE_NAME);
         if (!outputFile.exists() && !outputFile.isDirectory()) {
             final InputStream inputStream = getInputStream(remoteFile);
@@ -69,10 +72,10 @@ public class FileDownloader {
             HttpResponse response = HttpClients.createDefault().execute(new HttpGet(url));
             log.info("Received HTTP response");
             return new BufferedInputStream(response.getEntity().getContent());
-        } catch (ClientProtocolException e) {
-            log.error("Exception", e);
-        } catch (IOException e) {
-            log.error("Exception", e);
+        } catch (final ClientProtocolException e) {
+            log.error("Client Protocol Exception", e);
+        } catch (final IOException e) {
+            log.error("IO Exception", e);
         }
         throw new NullPointerException("Could not get input file");
     }
