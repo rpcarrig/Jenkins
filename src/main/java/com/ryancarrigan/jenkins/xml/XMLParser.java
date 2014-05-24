@@ -17,7 +17,6 @@ import java.io.IOException;
 public abstract class XMLParser {
     protected Document document;
     protected Element rootNode;
-    private SAXBuilder builder = new SAXBuilder();
 
     public XMLParser(final Document document) {
         this.document = document;
@@ -26,12 +25,12 @@ public abstract class XMLParser {
 
     public XMLParser(final String xmlFile) {
         try {
-            document = builder.build(xmlFile);
+            document = new SAXBuilder().build(xmlFile);
             rootNode = document.getRootElement();
         } catch (final JDOMException jde) {
-
+            jde.printStackTrace();
         } catch (final IOException ioe) {
-
+            ioe.printStackTrace();
         }
     }
 }

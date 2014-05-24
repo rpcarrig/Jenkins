@@ -1,4 +1,4 @@
-package com.ryancarrigan.jenkins;
+package com.ryancarrigan.jenkins.download;
 
 import org.jdom2.Document;
 import org.jdom2.JDOMException;
@@ -13,7 +13,7 @@ import java.io.IOException;
  * @since 5/23/14.
  */
 public class FileLoader {
-    private String filePath;
+    private final String filePath;
 
     public FileLoader(final String filePath) {
         this.filePath = filePath;

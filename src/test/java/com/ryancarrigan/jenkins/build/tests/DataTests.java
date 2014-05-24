@@ -1,7 +1,9 @@
 package com.ryancarrigan.jenkins.build.tests;
 
-import com.ryancarrigan.jenkins.JenkinsFileDownloader;
-import com.ryancarrigan.jenkins.data.file.View;
+import com.ryancarrigan.jenkins.data.Jenkins;
+import com.ryancarrigan.jenkins.data.file.home.HomeView;
+import com.ryancarrigan.jenkins.data.file.view.View;
+import com.ryancarrigan.jenkins.data.file.view.ViewJob;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -12,22 +14,20 @@ import org.testng.annotations.Test;
  * @since 5/23/14.
  */
 public class DataTests extends TestBase {
-    final String jenkinsUrl = "http://sectstjnk01.us.gspt.net:8080/";
+    String jenkinsUrl;
 
     @BeforeMethod
     public void downloadFile() {
         log.info("Starting test...");
+        jenkinsUrl = "http://sectstjnk01.us.gspt.net:8080/";
     }
 
     @Test
     public void testFileDownloader() {
-        JenkinsFileDownloader jenkinsFileDownloader = new JenkinsFileDownloader(jenkinsUrl);
+        Jenkins jenkins = new Jenkins(jenkinsUrl);
 
-        View rr = jenkinsFileDownloader.getView("Regression Revival Framework");
-        log.info(rr.getDescription());
-        for (final View.Job j : rr.getJobs()) {
-            log.info(j.toString());
-        }
+        View view = jenkins.getHome().getView("Regression Revival");
+        log.info(view.getDescription());
 
     }
 }

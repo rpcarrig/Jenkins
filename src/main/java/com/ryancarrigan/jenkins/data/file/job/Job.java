@@ -1,6 +1,8 @@
-package com.ryancarrigan.jenkins.data.file;
+package com.ryancarrigan.jenkins.data.file.job;
 
 import com.ryancarrigan.jenkins.data.JenkinsXMLFile;
+import com.ryancarrigan.jenkins.data.file.job.HealthReport;
+import com.ryancarrigan.jenkins.data.file.job.JobBuild;
 import org.jdom2.Document;
 import org.jdom2.Element;
 
@@ -14,25 +16,25 @@ import java.util.List;
  * @since 5/22/14.
  */
 public class Job extends JenkinsXMLFile {
-    private Boolean buildable;
-    private Boolean concurrentBuild;
-    private Boolean inQueue;
-    private Boolean keepDependencies;
-    private Build firstBuild;
-    private Build lastBuild;
-    private Build lastCompletedBuild;
-    private Build lastStableBuild;
-    private Build lastSuccessfulBuild;
-    private Build lastUnstableBuild;
-    private Build lastUnsuccessfulBuild;
-    private Integer nextBuildNumber;
-    private List<Build> builds;
-    private List<HealthReport> healthReports;
-    private List<Module> modules;
-    private String color;
-    private String displayName;
-    private String name;
-    private String url;
+    private final Boolean buildable;
+    private final Boolean concurrentBuild;
+    private final Boolean inQueue;
+    private final Boolean keepDependencies;
+    private final Integer nextBuildNumber;
+    private final JobBuild firstBuild;
+    private final JobBuild lastBuild;
+    private final JobBuild lastCompletedBuild;
+    private final JobBuild lastStableBuild;
+    private final JobBuild lastSuccessfulBuild;
+    private final JobBuild lastUnstableBuild;
+    private final JobBuild lastUnsuccessfulBuild;
+    private final List<HealthReport> healthReports;
+    private final List<JobBuild> builds;
+    private final List<Module> modules;
+    private final String color;
+    private final String displayName;
+    private final String name;
+    private final String url;
 
     public Job(final Document document) {
         super(document, "mavenModuleSet");
@@ -78,31 +80,31 @@ public class Job extends JenkinsXMLFile {
         return keepDependencies;
     }
 
-    public Build getFirstBuild() {
+    public JobBuild getFirstBuild() {
         return firstBuild;
     }
 
-    public Build getLastBuild() {
+    public JobBuild getLastBuild() {
         return lastBuild;
     }
 
-    public Build getLastCompletedBuild() {
+    public JobBuild getLastCompletedBuild() {
         return lastCompletedBuild;
     }
 
-    public Build getLastStableBuild() {
+    public JobBuild getLastStableBuild() {
         return lastStableBuild;
     }
 
-    public Build getLastSuccessfulBuild() {
+    public JobBuild getLastSuccessfulBuild() {
         return lastSuccessfulBuild;
     }
 
-    public Build getLastUnstableBuild() {
+    public JobBuild getLastUnstableBuild() {
         return lastUnstableBuild;
     }
 
-    public Build getLastUnsuccessfulBuild() {
+    public JobBuild getLastUnsuccessfulBuild() {
         return lastUnsuccessfulBuild;
     }
 
@@ -110,7 +112,7 @@ public class Job extends JenkinsXMLFile {
         return nextBuildNumber;
     }
 
-    public List<Build> getBuilds() {
+    public List<JobBuild> getBuilds() {
         return builds;
     }
 
@@ -138,12 +140,12 @@ public class Job extends JenkinsXMLFile {
         return url;
     }
 
-    private Build getBuild(final Element build) {
-        return new Build(build);
+    private JobBuild getBuild(final Element build) {
+        return new JobBuild(build);
     }
 
-    private List<Build> getBuildList(final Element root) {
-        final List<Build> builds = new ArrayList<Build>();
+    private List<JobBuild> getBuildList(final Element root) {
+        final List<JobBuild> builds = new ArrayList<JobBuild>();
         for (final Element build : root.getChildren("build")) {
             builds.add(getBuild(build));
         }
@@ -166,41 +168,4 @@ public class Job extends JenkinsXMLFile {
         return modules;
     }
 
-    private class Build {
-        private Integer number;
-        private String url;
-
-        protected Build(final Element build) {
-            if (null != build) {
-                this.number = Integer.valueOf(build.getChildText("number"));
-                this.url = build.getChildText("url");
-            }
-        }
-    }
-
-    private class HealthReport {
-        private Integer score;
-        private String description;
-        private String iconUrl;
-
-        protected HealthReport(final Element healthReport) {
-            this.score = Integer.valueOf(healthReport.getChildText("score"));
-            this.description = healthReport.getChildText("description");
-            this.iconUrl = healthReport.getChildText("iconUrl");
-        }
-    }
-
-    private class Module {
-        private String color;
-        private String displayName;
-        private String name;
-        private String url;
-
-        protected Module(final Element module) {
-            this.color = module.getChildText("color");
-            this.displayName = module.getChildText("displayName");
-            this.name = module.getChildText("name");
-            this.url = module.getChildText("url");
-        }
-    }
 }

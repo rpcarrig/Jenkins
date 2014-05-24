@@ -1,7 +1,7 @@
-package com.ryancarrigan.jenkins;
+package com.ryancarrigan.jenkins.download;
 
-import com.ryancarrigan.jenkins.data.file.Hudson;
-import com.ryancarrigan.jenkins.data.file.View;
+import com.ryancarrigan.jenkins.data.file.home.Home;
+import com.ryancarrigan.jenkins.data.file.view.View;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpGet;
@@ -22,16 +22,16 @@ import java.io.*;
  */
 public class JenkinsFileDownloader {
     private final static Logger log = LoggerFactory.getLogger(JenkinsFileDownloader.class);
-    private final static String OUTPUT_DIR = "src/main/resources/xml";
+    private final static String OUTPUT_DIR = "xml";
     private final static String SUFFIX = "api/xml?depth=1";
-    private String jenkinsUrl;
+    private final String jenkinsUrl;
 
    public JenkinsFileDownloader(final String jenkinsUrl) {
        this.jenkinsUrl = jenkinsUrl;
    }
 
-    public Hudson getPrimaryView() {
-        return new Hudson(null);
+    public Home getPrimaryView() {
+        return new Home(null);
     }
 
     public View getView(String viewName) {
@@ -41,8 +41,7 @@ public class JenkinsFileDownloader {
         log.info(file);
         log.info(url);
 
-        final File viewFile = getFile(file, url);
-        final Document docu = getDocument(file);
+        final Document docu = getDocument(getFile(file, url));
         return new View(docu);
     }
 
@@ -57,13 +56,14 @@ public class JenkinsFileDownloader {
         return null;
     }
 
-    private File getFile(final String localFile, final String remoteFile) {
+    private String getFile(final String localFile, final String remoteFile) {
         final File outputFile = new File(localFile);
         if (!outputFile.exists() && !outputFile.isDirectory()) {
             final InputStream inputStream = getInputStream(remoteFile);
             final BufferedOutputStream outputStream = getOutputStream(outputFile);
             try {
-                outputFile.createNewFile();
+                if (outputFile.createNewFile())
+                    throw new NullPointerException("Error creating file");
 
                 Integer bytesIn;
                 while ((bytesIn = inputStream.read()) >= 0)
@@ -74,7 +74,7 @@ public class JenkinsFileDownloader {
                 log.error("IO Exception", ioe);
             }
         }
-        return outputFile;
+        return localFile;
     }
 
     private static BufferedInputStream getInputStream(final String url){

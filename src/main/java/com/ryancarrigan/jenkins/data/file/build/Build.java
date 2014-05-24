@@ -1,6 +1,8 @@
-package com.ryancarrigan.jenkins.data.file;
+package com.ryancarrigan.jenkins.data.file.build;
 
 import com.ryancarrigan.jenkins.data.JenkinsXMLFile;
+import com.ryancarrigan.jenkins.data.file.BuildCulprit;
+import com.ryancarrigan.jenkins.data.file.build.changeset.BuildChangeSet;
 import org.jdom2.Document;
 import org.jdom2.Element;
 
@@ -11,31 +13,31 @@ import java.util.List;
  * Created by Suave Peanut on 5/22/14.
  */
 public class Build extends JenkinsXMLFile {
-    private Boolean building;
-    private Boolean keepLog;
-    private ChangeSet changeSet;
-    private Integer failCount;
-    private Integer number;
-    private Integer skipCount;
-    private Integer totalCount;
-    private List<Culprit> culprits;
-    private Long duration;
-    private Long estimatedDuration;
-    private Long timestamp;
-    private String builtOn;
-    private String cause;
-    private String fullDisplayName;
-    private String mavenArtifacts;
-    private String mavenVersionUsed;
-    private String id;
-    private String result;
-    private String url;
+    private final Boolean building;
+    private final Boolean keepLog;
+    private final BuildChangeSet changeSet;
+    private final Integer failCount;
+    private final Integer number;
+    private final Integer skipCount;
+    private final Integer totalCount;
+    private final List<BuildCulprit> culprits;
+    private final Long duration;
+    private final Long estimatedDuration;
+    private final Long timestamp;
+    private final String builtOn;
+    private final String cause;
+    private final String fullDisplayName;
+    private final String mavenArtifacts;
+    private final String mavenVersionUsed;
+    private final String id;
+    private final String result;
+    private final String url;
 
     public Build(final Document document) {
         super(document, "mavenModuleSetBuild");
         this.building = Boolean.valueOf(root.getChildText("building"));
         this.keepLog = Boolean.valueOf(root.getChildText("keepLog"));
-        this.changeSet = new ChangeSet(root.getChild("changeSet"));
+        this.changeSet = new BuildChangeSet(root.getChild("changeSet"));
         this.failCount = Integer.valueOf(getActionChild("failCount").getText());
         this.number = Integer.valueOf(root.getChildText("number"));
         this.skipCount = Integer.valueOf(getActionChild("skipCount").getText());
@@ -63,10 +65,10 @@ public class Build extends JenkinsXMLFile {
         throw new NullPointerException("Unable to identify child");
     }
 
-    private List<Culprit> getCulpritList() {
-        final List<Culprit> culprits = new ArrayList<Culprit>();
+    private List<BuildCulprit> getCulpritList() {
+        final List<BuildCulprit> culprits = new ArrayList<BuildCulprit>();
         for (final Element culprit : root.getChildren("culprit")) {
-            culprits.add(new Culprit(culprit));
+            culprits.add(new BuildCulprit(culprit));
         }
         return culprits;
     }
@@ -79,7 +81,7 @@ public class Build extends JenkinsXMLFile {
         return keepLog;
     }
 
-    public ChangeSet getChangeSet() {
+    public BuildChangeSet getChangeSet() {
         return changeSet;
     }
 
@@ -99,7 +101,7 @@ public class Build extends JenkinsXMLFile {
         return totalCount;
     }
 
-    public List<Culprit> getCulprits() {
+    public List<BuildCulprit> getCulprits() {
         return culprits;
     }
 
@@ -145,68 +147,5 @@ public class Build extends JenkinsXMLFile {
 
     public String getUrl() {
         return url;
-    }
-
-    private class ChangeSet {
-        private Item item;
-        private String kind;
-        
-        protected ChangeSet(final Element changeSet) {
-            log.info(changeSet.getText());
-            this.item = new Item(changeSet.getChild("item"));
-            this.kind = changeSet.getChildText("kind");
-        }
-
-        private class Item {
-            private Author author;
-            private Long commitId;
-            private Long revision;
-            private Long timestamp;
-            private String affectedPath;
-            private String date;
-            private String msg;
-            private String user;
-            
-            protected Item(final Element item) {
-                this.author = new Author(item.getChild("author"));
-                this.commitId = Long.valueOf(item.getChildText("commitId"));
-                this.revision = Long.valueOf(item.getChildText("revision"));
-                this.timestamp = Long.valueOf(item.getChildText("timestamp"));
-                this.affectedPath = item.getChildText("affectedPath");
-                this.date = item.getChildText("date");
-                this.msg = item.getChildText("msg");
-                this.user = item.getChildText("user");
-            }
-            
-            private class Author {
-                private String abosluteUrl;
-                private String fullName;
-                
-                protected Author(final Element author) {
-                    this.abosluteUrl = author.getChildText("absoluteUrl");
-                    this.fullName = author.getChildText("fullName");
-                }
-            }
-            
-            private class Path {
-                private String editType;
-                private String file;
-                
-                protected Path(final Element path) {
-                    this.editType = path.getChildText("editType");
-                    this.file = path.getChildText("file");
-                }
-            }
-        }
-    }
-
-    private class Culprit {
-        private String absoluteUrl;
-        private String fullName;
-
-        protected Culprit(final Element culprit) {
-            this.absoluteUrl = culprit.getChildText("absoluteUrl");
-            this.fullName = culprit.getChildText("fullName");
-        }
     }
 }
