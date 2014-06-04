@@ -3,20 +3,27 @@ package com.ryancarrigan.jenkins.data;
 import com.ryancarrigan.jenkins.download.FileDownloader;
 import org.jdom2.Document;
 import org.jdom2.Element;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created by Suave Peanut on 5/22/14.
  */
-public class JenkinsXMLFile extends FileDownloader {
-
-    private String localFile;
+public class JenkinsXMLFile {
     protected Element root;
+    protected Logger log = LoggerFactory.getLogger(JenkinsXMLFile.class);
+
+    public JenkinsXMLFile(final String url) {
+        this.root = getDocument(url).getRootElement();
+    }
 
     public JenkinsXMLFile(final Element element, final String... expectedNames) {
-//        log.info(String.format("Creating new <%s> XML file. Setting root node to <%s>", getClass().getSimpleName(),
-//                element.getName()));
         this.root = element;
-        assert(isValidRootName(expectedNames));
+        isValidRootName(expectedNames);
+    }
+
+    public JenkinsXMLFile(final Document document, final String expectedRootName) {
+        this(document.getRootElement(), expectedRootName);
     }
 
     private Boolean isValidRootName(final String... expectedNames) {
@@ -27,17 +34,22 @@ public class JenkinsXMLFile extends FileDownloader {
                 return true;
             else nameOutput.append(String.format("(%s)", name));
         }
-        log.error(String.format("Invalid input file. Expected: <%s> Actual: <%s>",
+        log.error(String.format("Invalid input jenkins. Expected: <%s> Actual: <%s>",
                 nameOutput.toString(), root.getName()));
         return false;
     }
 
-    public JenkinsXMLFile(final Document document, final String expectedRootName) {
-        this(document.getRootElement(), expectedRootName);
+    protected Document getDocument(final String url) {
+        return new FileDownloader(url).getDocument();
     }
 
-    protected Boolean isValidFile(final String desiredRootName) {
-        return root.getName().equals(desiredRootName);
+    private Element getActionChild(final String child) {
+        for (final Element action : root.getChildren("action")) {
+            final Element descendant = action.getChild(child);
+            if (null != descendant)
+                return descendant;
+        }
+        throw new NullPointerException("Unable to identify child");
     }
 
 }

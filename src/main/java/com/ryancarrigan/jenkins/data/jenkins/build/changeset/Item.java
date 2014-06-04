@@ -1,4 +1,4 @@
-package com.ryancarrigan.jenkins.data.file.build.changeset;
+package com.ryancarrigan.jenkins.data.jenkins.build.changeset;
 
 import org.jdom2.Element;
 
@@ -8,6 +8,7 @@ import org.jdom2.Element;
 public class Item {
 
     private final ItemAuthor author;
+    private final ItemPath path;
     private final Long commitId;
     private final Long revision;
     private final Long timestamp;
@@ -25,6 +26,7 @@ public class Item {
         this.date = item.getChildText("date");
         this.msg = item.getChildText("msg");
         this.user = item.getChildText("user");
+        this.path = new ItemPath(item.getChild("path"));
     }
 
     public ItemAuthor getAuthor() {
@@ -57,5 +59,9 @@ public class Item {
 
     public String getUser() {
         return user;
+    }
+
+    public ItemPath getPath() {
+        return path;
     }
 }

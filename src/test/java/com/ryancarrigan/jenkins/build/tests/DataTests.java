@@ -1,7 +1,7 @@
 package com.ryancarrigan.jenkins.build.tests;
 
-import com.ryancarrigan.jenkins.data.Jenkins;
-import com.ryancarrigan.jenkins.data.file.view.View;
+import com.ryancarrigan.jenkins.data.jenkins.build.Build;
+import com.ryancarrigan.jenkins.download.FileDownloader;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -16,16 +16,15 @@ public class DataTests extends TestBase {
 
     @BeforeMethod
     public void downloadFile() {
-        log.info("Starting test...");
         jenkinsUrl = "http://sectstjnk01.us.gspt.net:8080/";
     }
 
     @Test
     public void testFileDownloader() {
-        Jenkins jenkins = new Jenkins(jenkinsUrl);
-        log.info(jenkins.getHome().getNodeDescription());
+        Build b = new Build(
+                new FileDownloader("http://sectstjnk01.us.gspt.net:8080/job/RegressionRevival_SteinMart_TST02/181/").getDocument()
+        );
 
-        View view = jenkins.getView("Regression Revival");
-        log.info(view.getDescription());
+        log.info(b.getFullDisplayName());
     }
 }

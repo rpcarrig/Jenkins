@@ -1,7 +1,7 @@
-package com.ryancarrigan.jenkins.data.file.view;
+package com.ryancarrigan.jenkins.data.jenkins.view;
 
 import com.ryancarrigan.jenkins.data.JenkinsXMLFile;
-import com.ryancarrigan.jenkins.data.file.job.Job;
+import com.ryancarrigan.jenkins.data.jenkins.job.Job;
 import org.jdom2.Element;
 
 /**

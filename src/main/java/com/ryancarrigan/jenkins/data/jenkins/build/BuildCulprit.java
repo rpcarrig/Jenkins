@@ -1,4 +1,4 @@
-package com.ryancarrigan.jenkins.data.file;
+package com.ryancarrigan.jenkins.data.jenkins.build;
 
 import org.jdom2.Element;
 

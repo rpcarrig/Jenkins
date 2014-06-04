@@ -1,7 +1,7 @@
-package com.ryancarrigan.jenkins.data.file.home;
+package com.ryancarrigan.jenkins.data.jenkins.home;
 
 import com.ryancarrigan.jenkins.data.JenkinsXMLFile;
-import com.ryancarrigan.jenkins.data.file.view.View;
+import com.ryancarrigan.jenkins.data.jenkins.view.View;
 import org.jdom2.Element;
 
 /**

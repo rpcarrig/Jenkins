@@ -1,4 +1,4 @@
-package com.ryancarrigan.jenkins.data.file.job;
+package com.ryancarrigan.jenkins.data.jenkins.job;
 
 import org.jdom2.Element;
 

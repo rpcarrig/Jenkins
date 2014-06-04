@@ -1,7 +1,7 @@
-package com.ryancarrigan.jenkins.data.file.job;
+package com.ryancarrigan.jenkins.data.jenkins.job;
 
 import com.ryancarrigan.jenkins.data.JenkinsXMLFile;
-import com.ryancarrigan.jenkins.data.file.build.Build;
+import com.ryancarrigan.jenkins.data.jenkins.build.Build;
 import org.jdom2.Element;
 
 /**
@@ -13,7 +13,8 @@ public class JobBuild extends JenkinsXMLFile {
     private String url;
 
     public JobBuild(final Element build) {
-        super(build, "build");
+        super(build, "build", "firstBuild", "lastBuild", "lastCompletedBuild", "lastStableBuild", "lastSuccessfulBuild",
+                "lastSuccessfulBuild", "lastUnstableBuild", "lastUnsuccessfulBuild");
         this.number = Integer.valueOf(build.getChildText("number"));
         this.url = build.getChildText("url");
     }

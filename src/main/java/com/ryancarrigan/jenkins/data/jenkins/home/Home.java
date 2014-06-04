@@ -1,9 +1,8 @@
-package com.ryancarrigan.jenkins.data.file.home;
+package com.ryancarrigan.jenkins.data.jenkins.home;
 
 import com.ryancarrigan.jenkins.data.JenkinsXMLFile;
-import com.ryancarrigan.jenkins.data.file.job.Job;
-import com.ryancarrigan.jenkins.data.file.view.View;
-import com.ryancarrigan.jenkins.data.file.view.ViewJob;
+import com.ryancarrigan.jenkins.data.jenkins.job.Job;
+import com.ryancarrigan.jenkins.data.jenkins.view.View;
 import org.jdom2.Document;
 import org.jdom2.Element;
 
@@ -11,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * com.ryancarrigan.jenkins.data.file
+ * com.ryancarrigan.jenkins.data.jenkins
  *
  * @author Ryan P. Carrigan
  * @since 5/23/14.
@@ -48,9 +47,16 @@ public class Home extends JenkinsXMLFile {
         this.primaryView = new HomeView(root.getChild("primaryView"));
     }
 
+    public View getView() {
+        return getView(0);
+    }
+
+    public View getView(final Integer viewNumber) {
+        return new View(getDocument(views.get(viewNumber).getUrl()));
+    }
+
     public View getView(final String viewName) {
         for (final HomeView view : views) {
-            log.info(String.format("Actual <%s> Expected <%s>", view.getName(), viewName));
             if (view.getName().equals(viewName))
                 return new View(getDocument(view.getUrl()));
         }
@@ -58,11 +64,11 @@ public class Home extends JenkinsXMLFile {
     }
 
     private List<Job> getJobList() {
-        return new ArrayList<Job>();
+        return new ArrayList<>();
     }
 
     private List<HomeView> getViewList() {
-        final List<HomeView> viewList = new ArrayList<HomeView>();
+        final List<HomeView> viewList = new ArrayList<>();
         for (final Element view : root.getChildren("view")) {
             viewList.add(new HomeView(view));
         }

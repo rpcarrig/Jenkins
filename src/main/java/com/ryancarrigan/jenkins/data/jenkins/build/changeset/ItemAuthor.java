@@ -1,4 +1,4 @@
-package com.ryancarrigan.jenkins.data.file.build.changeset;
+package com.ryancarrigan.jenkins.data.jenkins.build.changeset;
 
 import org.jdom2.Element;
 

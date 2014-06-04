@@ -1,8 +1,8 @@
-package com.ryancarrigan.jenkins.data.file.job;
+package com.ryancarrigan.jenkins.data.jenkins.job;
 
 import com.ryancarrigan.jenkins.data.JenkinsXMLFile;
-import com.ryancarrigan.jenkins.data.file.job.HealthReport;
-import com.ryancarrigan.jenkins.data.file.job.JobBuild;
+import com.ryancarrigan.jenkins.data.jenkins.build.Build;
+import com.ryancarrigan.jenkins.download.FileDownloader;
 import org.jdom2.Document;
 import org.jdom2.Element;
 
@@ -42,13 +42,13 @@ public class Job extends JenkinsXMLFile {
         this.concurrentBuild = Boolean.valueOf(root.getChildText("concurrentBuild"));
         this.inQueue = Boolean.valueOf(root.getChildText("inQueue"));
         this.keepDependencies = Boolean.valueOf(root.getChildText("keepDependencies"));
-        this.firstBuild = getBuild(root.getChild("firstBuild"));
-        this.lastBuild = getBuild(root.getChild("lastBuild"));
-        this.lastCompletedBuild = getBuild(root.getChild("lastCompletedBuild"));
-        this.lastStableBuild = getBuild(root.getChild("lastStableBuild"));
-        this.lastSuccessfulBuild = getBuild(root.getChild("lastSuccessfulBuild"));
-        this.lastUnstableBuild = getBuild(root.getChild("lastUnstableBuild"));
-        this.lastUnsuccessfulBuild = getBuild(root.getChild("lastUnsuccessfulBuild"));
+        this.firstBuild = getJobBuild(root.getChild("firstBuild"));
+        this.lastBuild = getJobBuild(root.getChild("lastBuild"));
+        this.lastCompletedBuild = getJobBuild(root.getChild("lastCompletedBuild"));
+        this.lastStableBuild = getJobBuild(root.getChild("lastStableBuild"));
+        this.lastSuccessfulBuild = getJobBuild(root.getChild("lastSuccessfulBuild"));
+        this.lastUnstableBuild = getJobBuild(root.getChild("lastUnstableBuild"));
+        this.lastUnsuccessfulBuild = getJobBuild(root.getChild("lastUnsuccessfulBuild"));
         this.nextBuildNumber = Integer.valueOf(root.getChildText("nextBuildNumber"));
         this.builds = getBuildList(root);
         this.healthReports = getHealthReportList(root);
@@ -80,32 +80,32 @@ public class Job extends JenkinsXMLFile {
         return keepDependencies;
     }
 
-    public JobBuild getFirstBuild() {
-        return firstBuild;
+    public Build getFirstBuild() {
+        return getBuild(firstBuild);
     }
 
-    public JobBuild getLastBuild() {
-        return lastBuild;
+    public Build getLastBuild() {
+        return getBuild(lastBuild);
     }
 
-    public JobBuild getLastCompletedBuild() {
-        return lastCompletedBuild;
+    public Build getLastCompletedBuild() {
+        return getBuild(lastCompletedBuild);
     }
 
-    public JobBuild getLastStableBuild() {
-        return lastStableBuild;
+    public Build getLastStableBuild() {
+        return getBuild(lastStableBuild);
     }
 
-    public JobBuild getLastSuccessfulBuild() {
-        return lastSuccessfulBuild;
+    public Build getLastSuccessfulBuild() {
+        return getBuild(lastSuccessfulBuild);
     }
 
-    public JobBuild getLastUnstableBuild() {
-        return lastUnstableBuild;
+    public Build getLastUnstableBuild() {
+        return getBuild(lastUnstableBuild);
     }
 
-    public JobBuild getLastUnsuccessfulBuild() {
-        return lastUnsuccessfulBuild;
+    public Build getLastUnsuccessfulBuild() {
+        return getBuild(lastUnsuccessfulBuild);
     }
 
     public Integer getNextBuildNumber() {
@@ -140,20 +140,27 @@ public class Job extends JenkinsXMLFile {
         return url;
     }
 
-    private JobBuild getBuild(final Element build) {
-        return new JobBuild(build);
+    private Build getBuild(final JobBuild jobBuild) {
+        final Document document = new FileDownloader(jobBuild.getUrl()).getDocument();
+        return new Build(document);
+    }
+
+    private JobBuild getJobBuild(final Element build) {
+        if (null != build)
+            return new JobBuild(build);
+        return null;
     }
 
     private List<JobBuild> getBuildList(final Element root) {
-        final List<JobBuild> builds = new ArrayList<JobBuild>();
+        final List<JobBuild> builds = new ArrayList<>();
         for (final Element build : root.getChildren("build")) {
-            builds.add(getBuild(build));
+            builds.add(getJobBuild(build));
         }
         return builds;
     }
 
     private List<HealthReport> getHealthReportList(final Element root) {
-        final List<HealthReport> healthReports = new ArrayList<HealthReport>();
+        final List<HealthReport> healthReports = new ArrayList<>();
         for (final Element healthReport : root.getChildren("healthReport")) {
             healthReports.add(new HealthReport(healthReport));
         }
@@ -161,7 +168,7 @@ public class Job extends JenkinsXMLFile {
     }
 
     private List<Module> getModuleList(final Element root) {
-        final List<Module> modules = new ArrayList<Module>();
+        final List<Module> modules = new ArrayList<>();
         for (final Element module : root.getChildren("module")) {
             modules.add(new Module(module));
         }

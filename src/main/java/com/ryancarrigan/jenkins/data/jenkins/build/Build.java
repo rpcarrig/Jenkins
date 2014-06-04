@@ -1,8 +1,7 @@
-package com.ryancarrigan.jenkins.data.file.build;
+package com.ryancarrigan.jenkins.data.jenkins.build;
 
 import com.ryancarrigan.jenkins.data.JenkinsXMLFile;
-import com.ryancarrigan.jenkins.data.file.BuildCulprit;
-import com.ryancarrigan.jenkins.data.file.build.changeset.ChangeSet;
+import com.ryancarrigan.jenkins.data.jenkins.build.changeset.ChangeSet;
 import org.jdom2.Document;
 import org.jdom2.Element;
 
@@ -32,6 +31,7 @@ public class Build extends JenkinsXMLFile {
     private final String id;
     private final String result;
     private final String url;
+    private final String urlName;
 
     public Build(final Document document) {
         super(document, "mavenModuleSetBuild");
@@ -54,11 +54,12 @@ public class Build extends JenkinsXMLFile {
         this.id = root.getChildText("id");
         this.result = root.getChildText("result");
         this.url = root.getChildText("url");
+        this.urlName = getActionChild("urlName").getText();
     }
 
     private Element getActionChild(final String child) {
         for (final Element action : root.getChildren("action")) {
-            final Element descendant = root.getChild(child);
+            final Element descendant = action.getChild(child);
             if (null != descendant)
                 return descendant;
         }
@@ -66,7 +67,7 @@ public class Build extends JenkinsXMLFile {
     }
 
     private List<BuildCulprit> getCulpritList() {
-        final List<BuildCulprit> culprits = new ArrayList<BuildCulprit>();
+        final List<BuildCulprit> culprits = new ArrayList<>();
         for (final Element culprit : root.getChildren("culprit")) {
             culprits.add(new BuildCulprit(culprit));
         }
