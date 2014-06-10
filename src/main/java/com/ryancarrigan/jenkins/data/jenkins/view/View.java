@@ -37,7 +37,7 @@ public class View extends JenkinsXMLFile {
         return jobs;
     }
 
-    public Job getJob() {
+    public Job getFirstJob() {
         return getJob(0);
     }
 
@@ -50,6 +50,6 @@ public class View extends JenkinsXMLFile {
             if (job.getName().equals(jobName))
                 return new Job(getDocument(job.getUrl()));
         }
-        return getJob();
+        return getFirstJob();
     }
 }

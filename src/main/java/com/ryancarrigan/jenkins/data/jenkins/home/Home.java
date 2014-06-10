@@ -47,8 +47,8 @@ public class Home extends JenkinsXMLFile {
         this.primaryView = new HomeView(root.getChild("primaryView"));
     }
 
-    public View getView() {
-        return getView(0);
+    public View getFirstView() {
+        return getView(1);
     }
 
     public View getView(final Integer viewNumber) {

@@ -10,7 +10,11 @@ import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 import java.io.*;
 import java.util.Random;
 
@@ -23,8 +27,7 @@ import java.util.Random;
 public class FileDownloader {
     private final static String TEMP_FILE_NAME = "temp";
     private final static String FILE_EXTENSION = ".xml";
-    private Logger log = LoggerFactory.getLogger(JenkinsXMLFile.class);
-    private File outputFile;
+    private static Logger log = LoggerFactory.getLogger(JenkinsXMLFile.class);
     private String url;
 
     public FileDownloader(final String url) {
@@ -32,7 +35,10 @@ public class FileDownloader {
     }
 
     public Document getDocument() {
-        final String file = getFile(url);
+        return getDocument(getFile(url));
+    }
+
+    public static Document getDocument(final File file) {
         try {
             final Document document = new SAXBuilder().build(file);
             log.trace(String.format("Returning <%s> document", document.getRootElement().getName()));
@@ -45,9 +51,9 @@ public class FileDownloader {
         return null;
     }
 
-    private String getFile(final String remoteFile) {
+    private File getFile(final String remoteFile) {
         log.info(String.format("Downloading document: <%s>", url));
-        outputFile = new File(TEMP_FILE_NAME + new Random().nextInt(999) + FILE_EXTENSION);
+        final File outputFile = new File(TEMP_FILE_NAME + new Random().nextInt(999) + FILE_EXTENSION);
         if (!outputFile.exists() && !outputFile.isDirectory()) {
             final InputStream inputStream = getInputStream(url);
             final BufferedOutputStream outputStream = getOutputStream(outputFile);
@@ -64,7 +70,7 @@ public class FileDownloader {
                 log.error("IO Exception", ioe);
             }
         }
-        return outputFile.getName();
+        return outputFile;
     }
 
     private BufferedInputStream getInputStream(final String url) {
